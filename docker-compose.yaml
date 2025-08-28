@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    image: space-arana-server:1.0.1
+    ports:
+      - "8080:8080"
+    networks:
+      - sa-net
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.bot
+    image: space-arana-bot:1.0.1
+    environment:
+      - SERVER_ADDR=server:8080
+      - NUMBER_OF_BOTS=8
+    depends_on:
+      - server
+    networks:
+      - sa-net
+
+networks:
+  sa-net:
+    driver: bridge

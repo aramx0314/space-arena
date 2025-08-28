@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SPACE ARENA BOT</title>
+    <style>
+        html,
+        #log {
+            border: 0px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            width: 700px;
+            /* height: 200px; */
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <label for="numberOfBot">BOT:</label>
+    <input type="number" id="numberOfBot" min="0" max="255" placeholder="0~255">
+    <button id="createBotsbutton" onclick="createBots()">생성</button>
+    <div id="log"></div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/game_bot.js"></script>
+    <script>
+        function createBots() {
+            // 생성할 bot 수 입력
+            const numberOfBot = document.getElementById("numberOfBot").value;
+            if (numberOfBot.trim() === "") {
+                alert("숫자를 입력해주세요!");
+                return;
+            }
+            const number = parseInt(numberOfBot);
+            if (number < 0 || number > 255) {
+                alert("0~255 사이의 값을 입력해주세요!");
+                return;
+            }
+            document.getElementById("numberOfBot").disabled = true;
+            document.getElementById("createBotsbutton").disabled = true;
+
+            // 로그 함수 정의
+            let logDiv = document.getElementById("log");
+            let logger = function(content) {
+                let newLog = document.createElement("p");
+                newLog.style.fontSize = '10px';
+                newLog.style.lineHeight = '10px';
+                newLog.textContent = content;
+                logDiv.insertBefore(newLog, logDiv.firstChild);
+                logDiv.scrollTop = logDiv.scrollHeight;
+            };
+
+            // bot 생성
+            let bots = [];
+            for (let i=0; i<number; i++) {
+                bots.push(new Bot(logger));
+            }
+        }
+    </script>
+</body>
+</html>

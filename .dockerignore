@@ -1,0 +1,4 @@
+README.md
+Dockerfile.bot
+Dockerfile.server
+docker-compose.yaml

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SPACE ARENA</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: #b9b3b3;
+            color: #eee;
+            font-family: system-ui, sans-serif;
+        }
+        #wrap {
+            display: grid;
+            place-items: center;
+            height: 100%;
+        }
+        canvas {
+            background: #000;
+            border: 1px solid #000;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <canvas id="main" width="800" height="600"></canvas>
+    </div>
+    <script src="js/utils.js"></script>
+    <script src="js/game_object.js"></script>
+    <script src="js/game_ui.js"></script>
+    <script src="js/scene_main.js"></script>
+    <script src="js/scene_game.js"></script>
+    <script>
+        // canvas
+        const canvas = document.getElementById('main');
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+
+        // scene
+        let scene;
+
+        // websocket
+        const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+        const ws = new WebSocket(`${proto}://${location.host}/ws`);
+        ws.addEventListener('message', (e) => {
+            const msg = JSON.parse(e.data);
+            console.log("message from server:", msg);
+            // 첫 초기화 패킷 수신
+            if (msg.type === 'hello') {
+                scene = new SceneMain(msg.client_id, canvas, ws);
+                run();
+            } else if (msg.type === 'error') {
+                location.reload(true);
+            } else if (msg.type === 'start') {
+                // 메인 씬 fade out
+                scene.setFadeOut();
+                // 1초 뒤에 게임 씬으로 전환
+                setTimeout(() => {
+                    scene = new SceneGame(msg.client_id, canvas, ws);
+                    const ev = {type: 'game_init', owner_id: msg.client_id};
+                    ws.send(JSON.stringify({type: 'ingame', client_id: msg.client_id, event: ev}));
+                }, 1000);
+            } else {
+                scene.processMsg(msg);
+            }
+        });
+
+        // 업데이트 및 렌더링 함수
+        function run() {
+            let lastTime = 0;
+            const fps = 60;
+            const interval = 1000 / fps;
+            function loop(timestamp) {
+                if (timestamp - lastTime >= interval) {
+                    const dt = (timestamp - lastTime) / 1000;
+                    lastTime = timestamp;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    scene.updateAndDraw(dt);
+                }
+                requestAnimationFrame(loop);
+            }
+            requestAnimationFrame(loop);
+        }
+    </script>
+</body>
+</html>
