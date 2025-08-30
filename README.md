@@ -57,7 +57,7 @@ docker compose up
 ```
 
 ## 플레이
-- 서버를 실행한 후 웹 브라우저로 서버에 접속[http://localhost:8080/main.html]합니다. 
+- 서버를 실행한 후 웹 브라우저로 서버에 접속(http://localhost:8080/main.html) 합니다. 
 - START 버튼을 눌러 게임 시작을 준비합니다.
 - 게임 규칙과 조작법을 참고하여 게임을 플레이합니다.
-- 시연 영상: [https://youtu.be/T9yzqy48Iw0]
+- 시연 영상: https://youtu.be/T9yzqy48Iw0
