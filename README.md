@@ -42,6 +42,8 @@ SPACE ARENA는 웹 브라우저에서 실행할 수 있는 간단한 실시간 �
 
 ## 빌드
 ```bash
+git clone https://github.com/aramx0314/space-arena.git
+cd space-arena
 docker compose build
 ```
 빌드에 성공하면 다음의 이미지가 생성됩니다.
